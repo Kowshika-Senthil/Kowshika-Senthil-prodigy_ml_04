@@ -1,0 +1,33 @@
+import tensorflow as tf
+from tensorflow.keras import layers, models
+
+# Define your CNN model architecture
+def create_model(input_shape, num_classes):
+    model = models.Sequential([
+        layers.Conv2D(32, (3, 3), activation='relu', input_shape=input_shape),
+        layers.MaxPooling2D((2, 2)),
+        layers.Conv2D(64, (3, 3), activation='relu'),
+        layers.MaxPooling2D((2, 2)),
+        layers.Conv2D(128, (3, 3), activation='relu'),
+        layers.MaxPooling2D((2, 2)),
+        layers.Flatten(),
+        layers.Dense(128, activation='relu'),
+        layers.Dense(num_classes, activation='softmax')
+    ])
+    return model
+
+# Compile the model
+model = create_model(input_shape=(image_height, image_width, num_channels), num_classes=num_classes)
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+
+# Train the model
+history = model.fit(train_images, train_labels, epochs=num_epochs, validation_data=(val_images, val_labels))
+
+# Evaluate the model
+test_loss, test_acc = model.evaluate(test_images, test_labels)
+
+# Make predictions
+predictions = model.predict(test_images)
+
+# Save the model
+model.save('hand_gesture_model.h5')
